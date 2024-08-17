@@ -1,8 +1,8 @@
 variables: 
-  imageRepository: 'windows-agent'
-  dockerfilePath: 'docker/Dockerfile/windows-agent/azp-agent-windows.dockerfile'
+  imageRepository: 'linux-agent'
+  dockerfilePath: 'docker/linux-agent/azp-agent-linux.dockerfile'
   dockerRegistryServiceConnection: 'acrSvc'
-  tag: 'latest'
+  tag: latest
 
 stages:
 - stage: Build
