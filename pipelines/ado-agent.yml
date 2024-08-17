@@ -1,9 +1,10 @@
 variables: 
   imageRepository: 'windows-agent'
   dockerfile: 'docker/Dockerfile/windows-agent/azp-agent-windows.dockerfile'
-  dockerRegistryServiceConnection:
-  tag: latest
+  dockerRegistryServiceConnection: 'acrSvc'
+  tag: $(Build.BuildId)
 
+stages:
 - stage: Build
   displayName: Build and push stage
   jobs:  
