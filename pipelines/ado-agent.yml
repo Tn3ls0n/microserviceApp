@@ -1,0 +1,23 @@
+variables: 
+  imageRepository: 'windows-agent'
+  dockerfile: 'docker/Dockerfile/windows-agent/azp-agent-windows.dockerfile'
+  dockerRegistryServiceConnection:
+  tag: latest
+
+- stage: Build
+  displayName: Build and push stage
+  jobs:  
+  - job: Build
+    displayName: Build job
+    pool:
+      name: Default
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
