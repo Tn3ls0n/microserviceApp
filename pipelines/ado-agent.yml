@@ -1,6 +1,6 @@
 variables: 
   imageRepository: 'windows-agent'
-  dockerfile: 'docker/Dockerfile/windows-agent/azp-agent-windows.dockerfile'
+  dockerfilePatch: 'docker/Dockerfile/windows-agent/azp-agent-windows.dockerfile'
   dockerRegistryServiceConnection: 'acrSvc'
   tag: $(Build.BuildId)
 
