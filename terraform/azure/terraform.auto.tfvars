@@ -24,7 +24,11 @@ vm = {
 }
 
 agent = {
-
+  username  = "iAmAdmin"
+  host_name = "build-vm-dev-eastus"
+  ado_org   = ""
+  ado_pat   = ""
+  ado_pool  = "Default"
 }
 
 aks = {

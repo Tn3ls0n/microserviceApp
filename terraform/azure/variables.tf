@@ -35,7 +35,11 @@ variable "vm" {
 variable "agent" {
   description = "Azure DevOps Agent"
   type = object({
-
+    username  = string
+    host_name = string
+    ado_org   = string
+    ado_pat   = string
+    ado_pool  = string
   })
 }
 

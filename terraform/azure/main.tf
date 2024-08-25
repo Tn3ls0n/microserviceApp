@@ -17,7 +17,8 @@ module "vm" {
 }
 
 module "agent" {
-  source     = "../agent/modules/agent"
+  source     = "./modules/agent"
+  agent      = var.agent
   vm_id      = module.vm.vm_id
   depends_on = [module.vm]
 }

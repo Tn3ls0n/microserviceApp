@@ -1,10 +1,13 @@
-locals{
-    custom_script_content = templatefile("${path.module}/script.sh".
-        {
-            organization = var.organization
-
-        }
-    )
+locals {
+  custom_script_content = templatefile("${path.module}/script.sh",
+    {
+      username  = "${var.agent.username}"
+      host_name = "${var.agent.host_name}"
+      ado_org   = "${var.agent.ado_org}"
+      ado_pat   = "${var.agent.ado_pat}"
+      ado_pool  = "${var.agent.ado_pool}"
+    }
+  )
 }
 
 resource "azurerm_virtual_machine_extension" "agent" {
@@ -16,7 +19,7 @@ resource "azurerm_virtual_machine_extension" "agent" {
 
   settings = <<SETTINGS
  {
-  "script": 
+  "script": "${base64encode(local.custom_script_content)}"
  }
 SETTINGS
 }
