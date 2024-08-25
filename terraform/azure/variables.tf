@@ -9,24 +9,44 @@ variable "rg" {
 variable "vnet" {
   description = "Virual Network"
   type = object({
+    name                   = string
+    resource_group_name    = string
+    location               = string
+    address_space          = any
+    aks_subnet_name        = string
+    aks_subnet_addr_prefix = any
+    vm_subnet_name         = string
+    vm_subnet_addr_prefix  = any
+    vm_subnet_nic_name     = string
+  })
+}
+
+variable "vm" {
+  description = "Virtual Machine"
+  type = object({
     name                = string
     resource_group_name = string
     location            = string
-    address_space       = any
+    computer_name       = string
+    username            = string
+  })
+}
+
+variable "agent" {
+  description = "Azure DevOps Agent"
+  type = object({
+
   })
 }
 
 variable "aks" {
   description = "Azure Kubernetes Service"
   type = object({
-    subnet_name          = string
-    subnet_addr_prefix   = any
-    virtual_network_name = string
-    name                 = string
-    location             = string
-    resource_group_name  = string
-    dns_prefix           = string
-    node_count           = number
+    name                = string
+    location            = string
+    resource_group_name = string
+    dns_prefix          = string
+    node_count          = number
   })
 }
 
