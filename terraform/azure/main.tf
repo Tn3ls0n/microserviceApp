@@ -23,7 +23,7 @@ module "agent" {
   depends_on = [module.vm]
 }
 
-/* module "aks" {
+module "aks" {
   source     = "./modules/aks"
   aks        = var.aks
   subnet_id  = module.network.aks_subnet_id
@@ -35,4 +35,4 @@ module "acr" {
   acr        = var.acr
   kubelet_id = module.aks.aks_kubelet.0.object_id
   depends_on = [module.aks]
-} */
+}
