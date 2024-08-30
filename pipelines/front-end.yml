@@ -1,0 +1,86 @@
+name: $(Build.Repository.Name)_$(Build.DefinitionName)
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - frontend
+    exclude:
+    - README.md
+
+pool:
+  name: $(agentPool)
+
+resources:
+- repo: self
+
+variables:
+
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'daf677eb-67d3-4a60-b14c-44d0a0f4b2af'
+  imageRepository: 'frontend'
+  containerRegistry: 'myuniqueacrforaks.azurecr.io'
+  dockerfilePath: 'frontend/Dockerfile'
+  tag: '$(Build.BuildId)'
+  imagePullSecret: 'myuniqueacrforaks0e9c-auth'
+  agentpool: 'AKS'
+
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      name: $(agentPool)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+
+    - upload: manifests
+      artifact: manifests
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      name: $(agentPool)
+    environment: 'default'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              kubernetesServiceConnection: appCluster-default
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              kubernetesServiceConnection: appCluster-default
+              action: deploy
+              manifests: |
+                $(Pipeline.Workspace)/manifests/deployment.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
