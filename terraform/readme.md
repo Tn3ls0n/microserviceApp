@@ -20,5 +20,7 @@ push docker image to container registry
 docker build --tag "azp-agent:linux" --file "./azp-agent-linux.dockerfile" .
 
 TODO:
+Move the ado agent tf into the azure folder
+
 Upate main module file names.
 Remove location from from subnet names.

@@ -1,10 +1,11 @@
 variables: 
-  imageRepository: 'windows-agent'
-  dockerfilePath: 'docker/Dockerfile/windows-agent/azp-agent-windows.dockerfile'
-  dockerRegistryServiceConnection: 'acrSvc'
-  tag: 'latest'
+  imageRepository: 'linux-agent'
+  dockerfilePath: 'docker/linux-agent/azp-agent-linux.dockerfile'
+  dockerRegistryServiceConnection: '' # TODO: add service connection
+  tag: latest
 
 stages:
+
 - stage: Build
   displayName: Build and push stage
   jobs:  
@@ -22,3 +23,34 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      name: Default
+    environment: 'Tn3ls0nmicroserviceApp-1443.default'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                $(Pipeline.Workspace)/manifests/deployment.yml
+                $(Pipeline.Workspace)/manifests/service.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
