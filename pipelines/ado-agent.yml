@@ -1,6 +1,10 @@
 variables: 
-  imageRepository: 'linux-agent'
-  dockerfilePath: 'docker/linux-agent/azp-agent-linux.dockerfile'
+  imageRepository: 'linux-agent' # 'windows-agent'
+  - name: 'dockerfilePath'
+  ${{ if eq(variables['imageRepository'], 'linux-agent') }}:
+    value: 'docker/linux-agent/azp-agent-linux.dockerfile'
+  ${{ if eq(variables['imageRepository'], 'windows-agent') }}:
+    value: 'docker/windows-agent/azp-agent-windows.dockerfile'
   dockerRegistryServiceConnection: '' # TODO: add service connection
   tag: latest
 
